@@ -1,6 +1,19 @@
 import { reng } from "./connection.js";
-function pico() {
-    reng();
+import { question } from "./exports/confs.js";
+import fs from "fs";
+async function pico() {
+    const authFolder = "db/qr-code";
+    const resposta = await question("oq vc quer fazer? (1)logar (2) novo login: ");
+    if (resposta === "1") {
+        reng();
+    }
+    if (resposta === "2") {
+        if (fs.existsSync(authFolder)) {
+            fs.rmdirSync(authFolder, { recursive: true });
+            console.log("pasta de autenticação deletada");
+        }
+        reng();
+    }
     console.log("pico");
 }
 pico();
