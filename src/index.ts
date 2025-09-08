@@ -1,6 +1,7 @@
-import { connect } from "./connection.js"
+import { reng } from "./connection.js"
+
 
 function pico (){
-    connect()
+    reng()
     console.log("pico")}
 pico()
