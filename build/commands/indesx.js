@@ -1,5 +1,6 @@
 import { extractMessage, setupMessagingServices } from "../exports/messages.js";
 import { ping } from "./users/ping.js";
+import { menu } from "./users/menu.js";
 export async function handleCommand(faputa, from, m) {
     const { fullMessage, commandName, fromUser, media, isCommand, messageContent, textMessage, from: messageFrom, userName, groupId, } = extractMessage(m);
     // Usa o JID correto (remoteJid)
@@ -12,12 +13,16 @@ export async function handleCommand(faputa, from, m) {
         return;
     }
     console.log(` » ${userName}҂${commandName}`);
-    const commands = { ping };
+    const commands = {
+        ping,
+        menu,
+        m: menu,
+    };
     const command = commands[commandName];
     if (command) {
         await command(faputa, jid, m, { enviarTexto, enviarImagem, enviarAudioGravacao, enviarVideo, enviarDocumento });
     }
     else {
-        await enviarTexto(`❌ Comando *${commandName}* não reconhecido.`);
+        await enviarTexto(`❌ Comando *${commandName}* não encontrado digite Menu.`);
     }
 }

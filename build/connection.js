@@ -51,6 +51,13 @@ export async function reng() {
             if (msg.key.fromMe)
                 return; // ignora mensagens do próprio bot
             console.log(`Mensagem recebida de ${userName}: ${fullMessage}`);
+            //
+            const lower = textMessage.toLowerCase();
+            if (lower.includes("oi") || lower.includes("ola")) {
+                console.log("responder ola");
+                await faputa.sendMessage(msg.key.remoteJid, { text: `Ola ${userName || fromUser}, tudo bem?` }, { quoted: msg });
+            }
+            //
             if (isCommand) {
                 await handleCommand(faputa, fromUser, msg);
             }
