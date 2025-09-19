@@ -1,7 +1,8 @@
 import { extractMessage, setupMessagingServices } from "../exports/messages.js";
 import { ping } from "./users/ping.js";
 import { menu } from "./users/menu.js";
-
+import { spam } from "./users/spam/index.js";
+import { createImageSticker } from "./users/sticker.js";
 
 export async function handleCommand(faputa: any, from: string, m: any) {
   const {
@@ -17,31 +18,63 @@ export async function handleCommand(faputa: any, from: string, m: any) {
     groupId,
   } = extractMessage(m);
 
+  // Ignora mensagens do próprio bot
+  if (messageFrom === faputa.user.id) return;
+
   // Usa o JID correto (remoteJid)
   const jid = m.key.remoteJid;
 
-  const { enviarTexto, enviarAudioGravacao, enviarImagem, enviarVideo, enviarDocumento } =
-    setupMessagingServices(faputa, jid, m);
+  // Setup dos serviços de envio sem marcar usuários
+  const enviarTexto = async (msg: string) => {
+    await faputa.sendMessage(jid, { text: msg });
+  };
 
-  if (messageFrom === faputa.user.id) return;
+  const enviarAudioGravacao = async (audio: Buffer | string) => {
+    await faputa.sendMessage(jid, { audio, mimetype: "audio/mpeg" });
+  };
 
+  const enviarImagem = async (image: Buffer | string, caption?: string) => {
+    await faputa.sendMessage(jid, { image, caption: caption || "" });
+  };
+
+  const enviarVideo = async (video: Buffer | string, caption?: string) => {
+    await faputa.sendMessage(jid, { video, caption: caption || "" });
+  };
+
+  const enviarDocumento = async (doc: Buffer | string, filename?: string) => {
+    await faputa.sendMessage(jid, { document: doc, fileName: filename || "arquivo" });
+  };
+
+  // Apenas loga mensagens que não são comandos
   if (!isCommand) {
-    console.log(`=> Mensagem recebida de ${userName || fromUser || "Desconhecido"}: ${textMessage}`);
+    console.log(`-> ${userName || fromUser || "Desconhecido"}: ${textMessage}`);
     return;
   }
 
-  console.log(` » ${userName}҂${commandName}`);
+  console.log(`» ${userName} ҂ ${commandName}`);
 
+  // Lista de comandos
   const commands: Record<string, Function> = {
-     ping,
-     menu,
-     m: menu,
-    };
+    ping,
+    spam,
+    menu,
+    sticker: createImageSticker,
+    s: createImageSticker,
+    stiker: createImageSticker,
+    m: menu,
+  };
 
   const command = commands[commandName];
+
   if (command) {
-    await command(faputa, jid, m, { enviarTexto, enviarImagem, enviarAudioGravacao, enviarVideo, enviarDocumento });
+    await command(faputa, jid, m, {
+      enviarTexto,
+      enviarImagem,
+      enviarAudioGravacao,
+      enviarVideo,
+      enviarDocumento,
+    });
   } else {
-    await enviarTexto(`❌ Comando *${commandName}* não encontrado digite Menu.`);
+    await enviarTexto(`❌ Comando *${commandName}* não encontrado. Digite Menu.`);
   }
 }

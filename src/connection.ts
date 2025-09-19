@@ -64,12 +64,12 @@ export async function reng(): Promise<void> {
 
     if (msg.key.fromMe) return; // ignora mensagens do próprio bot
 
-    console.log(`Mensagem recebida de ${userName}: ${fullMessage}`);
+    console.log(`-> ${userName}: ${fullMessage}`);
     //
     const lower = textMessage.toLowerCase();
     if (lower.includes("oi") || lower.includes("ola")) {
         console.log("responder ola");
-        await faputa.sendMessage(msg.key.remoteJid!, {text: `Ola ${userName || fromUser}, tudo bem?`}, {quoted: msg});
+        await faputa.sendMessage(msg.key.remoteJid!, {text: `Ola ${userName || fromUser}, tudo bem?`}, );
     }
 
     //

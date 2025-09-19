@@ -90,7 +90,26 @@ export const extractMessage = (m) => {
 /**
  * Serviços de envio de mensagens
  */
+// src/exports/messages.ts
 export function setupMessagingServices(faputa, from, m) {
+    // === Funções que permitem passar o destino (spam) ===
+    const enviarTextospam = async (texto, jid = from) => {
+        try {
+            await faputa.sendMessage(jid, { text: texto });
+        }
+        catch (error) {
+            console.error("Erro ao enviar mensagem (spam):", error);
+        }
+    };
+    const enviarImagemspam = async (path, jid = from) => {
+        try {
+            await faputa.sendMessage(jid, { image: { url: path } });
+        }
+        catch (error) {
+            console.error("Erro ao enviar imagem (spam):", error);
+        }
+    };
+    // === Funções normais (sempre respondem ao from) ===
     const enviarTexto = async (texto) => {
         try {
             await faputa.sendMessage(from, { text: texto }, { quoted: m });
@@ -99,69 +118,60 @@ export function setupMessagingServices(faputa, from, m) {
             console.error("Erro ao enviar texto:", error);
         }
     };
-    const enviarAudioGravacao = async (arquivo) => {
+    const enviarImagem = async (arquivo, text) => { try {
+        if (typeof arquivo === "string" && arquivo.startsWith("http")) {
+            await faputa.sendMessage(from, { image: { url: arquivo }, caption: text }, { quoted: m });
+        }
+        else if (Buffer.isBuffer(arquivo)) {
+            await faputa.sendMessage(from, { image: arquivo, caption: text }, { quoted: m });
+        }
+        else if (typeof arquivo === "string" && fs.existsSync(arquivo)) {
+            const imageBuffer = fs.readFileSync(arquivo);
+            await faputa.sendMessage(from, { image: imageBuffer, caption: text }, { quoted: m });
+        }
+        else {
+            console.error("Arquivo de imagem inválido:", arquivo);
+        }
+    }
+    catch (error) {
+        console.error("Erro ao enviar imagem:", error);
+    } };
+    // Função para enviar áudio de gravação (PTT)
+    const enviarAudioGravacao = async (path) => {
         try {
-            await faputa.sendMessage(from, {
-                audio: fs.readFileSync(arquivo),
-                mimetype: "audio/mp4",
-                ptt: true,
-            }, { quoted: m });
+            await faputa.sendMessage(from, { audio: { url: path }, mimetype: "audio/mp4", ptt: true }, { quoted: m });
         }
         catch (error) {
             console.error("Erro ao enviar áudio:", error);
         }
     };
-    const enviarImagem = async (arquivo, text) => {
+    const enviarVideo = async (path) => {
         try {
-            if (typeof arquivo === "string" && arquivo.startsWith("http")) {
-                await faputa.sendMessage(from, { image: { url: arquivo }, caption: text }, { quoted: m });
-            }
-            else if (Buffer.isBuffer(arquivo)) {
-                await faputa.sendMessage(from, { image: arquivo, caption: text }, { quoted: m });
-            }
-            else if (typeof arquivo === "string" && fs.existsSync(arquivo)) {
-                const imageBuffer = fs.readFileSync(arquivo);
-                await faputa.sendMessage(from, { image: imageBuffer, caption: text }, { quoted: m });
-            }
-            else {
-                console.error("Arquivo de imagem inválido:", arquivo);
-            }
-        }
-        catch (error) {
-            console.error("Erro ao enviar imagem:", error);
-        }
-    };
-    const enviarVideo = async (arquivo, text) => {
-        try {
-            await faputa.sendMessage(from, {
-                video: fs.readFileSync(arquivo),
-                caption: text,
-                mimetype: "video/mp4",
-            }, { quoted: m });
+            await faputa.sendMessage(from, { video: { url: path } }, { quoted: m });
         }
         catch (error) {
             console.error("Erro ao enviar vídeo:", error);
         }
     };
-    const enviarDocumento = async (arquivo, text) => {
+    const enviarDocumento = async (path, mimetype, fileName) => {
         try {
-            await faputa.sendMessage(from, { document: fs.readFileSync(arquivo), caption: text }, { quoted: m });
+            await faputa.sendMessage(from, { document: { url: path }, mimetype, fileName }, { quoted: m });
         }
         catch (error) {
             console.error("Erro ao enviar documento:", error);
         }
     };
-    const enviarSticker = async (arquivo) => {
+    const enviarSticker = async (path) => {
         try {
-            await faputa.sendMessage(from, { sticker: fs.readFileSync(arquivo) }, { quoted: m });
+            await faputa.sendMessage(from, { sticker: { url: path } }, { quoted: m });
         }
         catch (error) {
-            console.error("Erro ao enviar sticker:", error);
+            console.error("Erro ao enviar figurinha:", error);
         }
     };
-    const enviarLocalizacao = async (latitude, longitude, text) => {
+    const enviarLocalizacao = async (latitude, longitude, name) => {
         try {
-            await faputa.sendMessage(from, { location: { latitude, longitude, caption: text } }, { quoted: m });
+            await faputa.sendMessage(from, { location: { degreesLatitude: latitude, degreesLongitude: longitude, name } }, { quoted: m });
         }
         catch (error) {
             console.error("Erro ao enviar localização:", error);
@@ -169,20 +179,30 @@ export function setupMessagingServices(faputa, from, m) {
     };
     const enviarContato = async (numero, nome) => {
         try {
-            await faputa.sendMessage(from, { contact: { phone: numero, name: { formattedName: nome } } }, { quoted: m });
+            await faputa.sendMessage(from, {
+                contacts: {
+                    displayName: nome,
+                    contacts: [{ displayName: nome, vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:${nome}\nTEL;type=CELL;type=VOICE;waid=${numero}:${numero}\nEND:VCARD` }],
+                },
+            }, { quoted: m });
         }
         catch (error) {
             console.error("Erro ao enviar contato:", error);
         }
     };
+    // === Retorno com todas as funções disponíveis ===
     return {
+        // Funções normais
         enviarTexto,
-        enviarAudioGravacao,
         enviarImagem,
+        enviarAudioGravacao,
         enviarVideo,
         enviarDocumento,
         enviarSticker,
         enviarLocalizacao,
         enviarContato,
+        // Funções que aceitam jid (spam)
+        enviarTextospam,
+        enviarImagemspam,
     };
 }

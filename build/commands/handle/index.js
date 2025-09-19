@@ -6,9 +6,18 @@ const BOT_NAME = process.env.BOT_NAME || "";
 export function menuCaption(m) {
     const { userName } = extractMessage(m);
     console.log(userName);
-    return `
-    Me:${BOT_NAME}
-    Prefixo: ${PREFIX}
-    Olá, ${userName || "usuário"}! Bem-vindo ao menu principal. Escolha uma das opções abaixo:
-    Ping - Verifica a conectividade com o bot.`;
+    return;
+    return `╭─═════༻-༺════─╮
+[ ✧ ]  Me: ${BOT_NAME}
+[ ✧ ]  Prefix: (${PREFIX})
+[ ✧ ]  Status: Online
+[ ✧ ]  Usuário: ${userName}
+         
+[ ✧ ]  Comandos: s, f, sticker
+[ ✧ ]  Comandos: toimg
+[ ✧ ]  Comandos: ping
+[ ✧ ]  Comandos: menu
+[ ✧ ]  Comandos: del
+[ ✧ ]  Comandos: help
+╰─═════༻-༺════─╯`;
 }
