@@ -48,6 +48,9 @@ export async function reng() {
             if (!msg || !msg.message)
                 return;
             const { isCommand, fullMessage, fromUser, userName, textMessage } = extractMessage(msg);
+            if (msg.key.fromMe === isCommand) {
+                await handleCommand(faputa, fromUser, msg);
+            }
             if (msg.key.fromMe)
                 return; // ignora mensagens do próprio bot
             console.log(`-> ${userName}: ${fullMessage}`);
