@@ -71,10 +71,10 @@ export async function reng(): Promise<void> {
     console.log(`-> ${userName}: ${fullMessage}`);
     //
     const lower = textMessage.toLowerCase();
-    if (lower.includes("oi") || lower.includes("ola")) {
-        console.log("responder ola");
-        await faputa.sendMessage(msg.key.remoteJid!, {text: `Ola ${userName || fromUser}, tudo bem?`}, );
-    }
+   // if (lower.includes("oi") || lower.includes("ola")) {
+       // console.log("responder ola");
+        //await faputa.sendMessage(msg.key.remoteJid!, {text: `Ola ${userName || fromUser}, tudo bem?`}, );
+    //}
 
     //
     if (isCommand) {
