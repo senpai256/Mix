@@ -1,5 +1,5 @@
 import { downloadVideo } from "../../exports/dowmediaContent.js";
-import { proto } from "baileys"; // Importando os tipos necessários
+import { proto } from "@whiskeysockets/baileys"; // Importando os tipos necessários
 import { extractMessage } from "../../exports/messages.js";
 /**
  * Função que lida com a mensagem e verifica se contém mídia

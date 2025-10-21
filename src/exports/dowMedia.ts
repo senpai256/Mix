@@ -1,4 +1,4 @@
-import { proto, downloadContentFromMessage } from 'baileys';
+import { proto, downloadContentFromMessage } from '@whiskeysockets/baileys';
 //import { Buffer } from 'buffer';
 import { extractMessage } from './messages.js';
 import * as internal from 'stream'; // Importação para `internal.Transform`

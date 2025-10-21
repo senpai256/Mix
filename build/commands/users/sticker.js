@@ -1,6 +1,6 @@
 import { join } from "path";
 import { writeFile, mkdir, rm } from "fs/promises";
-import { downloadContentFromMessage } from "baileys";
+import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 import { exec } from "child_process";
 import { promisify } from "util";
 import axios from "axios";

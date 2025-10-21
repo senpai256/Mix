@@ -1,4 +1,4 @@
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from "baileys";
+import makeWASocket, { DisconnectReason, useMultiFileAuthState } from "@whiskeysockets/baileys";
 import pino from "pino";
 import path from "path";
 import { logger } from "./exports/confs.js";
@@ -56,10 +56,10 @@ export async function reng() {
             console.log(`-> ${userName}: ${fullMessage}`);
             //
             const lower = textMessage.toLowerCase();
-            if (lower.includes("oi") || lower.includes("ola")) {
-                console.log("responder ola");
-                await faputa.sendMessage(msg.key.remoteJid, { text: `Ola ${userName || fromUser}, tudo bem?` });
-            }
+            // if (lower.includes("oi") || lower.includes("ola")) {
+            // console.log("responder ola");
+            //await faputa.sendMessage(msg.key.remoteJid!, {text: `Ola ${userName || fromUser}, tudo bem?`}, );
+            //}
             //
             if (isCommand) {
                 await handleCommand(faputa, fromUser, msg);

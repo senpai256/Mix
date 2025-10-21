@@ -1,4 +1,4 @@
-import makeWASocket, {DisconnectReason, useMultiFileAuthState} from "baileys";
+import makeWASocket, {DisconnectReason, useMultiFileAuthState} from "@whiskeysockets/baileys";
 import pino from "pino";
 import path from "path";
 import { logger } from "./exports/confs.js";
@@ -12,8 +12,9 @@ import { extractMessage } from "./exports/messages.js";
 
 export async function reng(): Promise<void> {
     const {state, saveCreds} = await useMultiFileAuthState(path.resolve(__dirname, "../../db/qr-code"))
+    
 
-    const faputa = makeWASocket({
+    const faputa = makeWASocket   ({
         printQRInTerminal: false,
         auth: state,
         browser: ["Ubuntu", "Chrome", "100.0.4896.127"],
@@ -55,7 +56,7 @@ export async function reng(): Promise<void> {
         }
     })
 
-   faputa.ev.on("messages.upsert", async (m) => {
+   faputa.ev.on("messages.upsert", async (m: any) => {
   try {
     const msg = m.messages[0];
     if (!msg || !msg.message) return;

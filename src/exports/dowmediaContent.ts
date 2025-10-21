@@ -1,7 +1,7 @@
 import { getMediaContent } from './dowMedia.js';  // Importe a função getMediaContent
 import * as fs from 'fs';
 import * as path from 'path';
-import { proto } from 'baileys'; // Importa os tipos do baileys
+import { proto } from '@whiskeysockets/baileys'; // Importa os tipos do baileys
 
 /**
  * Função para baixar e salvar uma imagem (ou outro tipo de mídia).
